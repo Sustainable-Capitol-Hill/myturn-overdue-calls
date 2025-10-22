@@ -10,7 +10,7 @@ function onOpen() {
 }
 
 // prettier-ignore
-const CALL_OUTCOME_CATEGORIES = {
+var CALL_OUTCOME_CATEGORIES = {
   TALKED_WILL_RETURN: "🗣️ Talked to patron, and they plan to return the item(s)",
   TALKED_WONT_RETURN: "🗣️ Talked to patron, but they won't or can't return the item(s)",
   TALKED_DROPPED: "🗣️ Talked to patron, but they hung up on you or the call dropped",
