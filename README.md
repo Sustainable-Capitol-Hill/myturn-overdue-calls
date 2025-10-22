@@ -1,5 +1,4 @@
-MyTurn Overdue Calls
----
+## MyTurn Overdue Calls
 
 This is a Google Apps Script project that (when combined with its Google Sheet) helps our tool library identify and make phone calls to patrons with long-overdue items, to encourage returning.
 
