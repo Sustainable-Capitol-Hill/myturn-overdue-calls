@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base target="_top">
+
+    <script>
+      function onSubmit(formObject) {
+        google.script.run
+          // Close the modal once the form is submitted and the spreadsheet gets updated
+          .withSuccessHandler(google.script.host.close)
+          .processCallForm(formObject)
+      }
+    </script>
+  </head>
+
+  <body>
+    <h3>Call information</h3>
+    <p>Patron: <a href="https://capitolhill.myturn.com/library/orgMembership/searchUsers?load=true&keyword=<?= userToCall['username'] ?>"><?= userToCall['first name'] ?> <?= userToCall['last name'] ?></a></p>
+    <p>Phone number: <a href="tel:<?= userToCall['phone number'] ?>"><?= userToCall['phone number'] ?></a></p>
+    <p>Overdue item(s):
+      <? for (var i = 0; i < userToCall['overdue item IDs'].split(",").length; i++) { ?>
+        <a href="https://capitolhill.myturn.com/library/inventory/browse?q=<?= userToCall['overdue item IDs'].split(',')[i] ?>" ><?= userToCall['overdue item names'].split(';')[i] ?></a><? if (i + 1 < userToCall['overdue item IDs'].split(",").length) { ?>,<? } ?>
+      <? } ?>
+    </p>
+    <p>Overdue item(s) initially checked out: <?= userToCall['first checked out date'].toLocaleDateString() ?></p>
+
+    <h3>Suggested voicemail script</h3>
+    <p>Hi <?= userToCall['first name'] ?>, this is <b><i>[your name]</i></b> from the Capitol Hill Tool Library.</p>
+    <p>
+      I'm calling to remind you to return the
+        <? if (userToCall['overdue item names'].split(";").length > 1) { ?>
+          <?= userToCall['overdue item names'].split(";").length ?> overdue items
+        <? } else { ?>
+          overdue <?= userToCall['overdue item names'] ?>
+        <? } ?>
+      that you checked out in
+        <!-- Can't have extra formatting spaces in this string, or the period will get a space before it -->
+        <!-- Also, can't use `toLocaleDateString` since this code executes in an older Rhino JavaScript runtime -->
+        <?= ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][userToCall['first checked out date'].getMonth()] ?><? if (userToCall['first checked out date'].getUTCFullYear() !== (new Date()).getUTCFullYear()) { ?> <?= userToCall['first checked out date'].getUTCFullYear() ?><? } ?>.
+        <? if (userToCall['overdue item names'].split(";").length > 1) { ?>
+          Specifically, the items to return are: 
+          <?= userToCall['overdue item names'].split(";").join("; ") ?>.
+        <? } ?>
+    </p>
+    <p>
+      Please return
+        <? if (userToCall['overdue item names'].split(";").length > 1) { ?>
+          these
+        <? } else { ?>
+          this item
+        <? } ?>
+      in the coming week, so that
+        <? if (userToCall['overdue item names'].split(";").length > 1) { ?>
+          they
+        <? } else { ?>
+          it
+        <? } ?>
+      can be re-used by others in the community. The tool library is open Monday through Thursday from 6 to 9 PM, Saturday 9 AM to noon, and Sunday 4 to 7 PM.
+    </p>
+    <p>Thank you!</p>
+
+    <h3>Record the outcome of your call</h3>
+    <form id="callForm" onsubmit="event.preventDefault(); onSubmit(this);">
+      <fieldset>
+        <legend>Which category best describes your call?</legend>
+          <? for (var i = 0; i < Object.keys(outcomeCategories).length; i++) { ?>
+            <!-- Need to use CSS here to get multi-line labels to align properly -->
+            <div style="display: flex; align-items: center;">
+              <input type="radio" required name="outcomeCategory" id="<?= Object.keys(outcomeCategories)[i] ?>" value="<?= Object.keys(outcomeCategories)[i] ?>" />
+              <div style="flex-grow: 1; line-height: 145%;">
+                <label for="<?= Object.keys(outcomeCategories)[i] ?>"><?= Object.keys(outcomeCategories).map(function (key) { return outcomeCategories[key] })[i] ?></label>
+              </div>
+            </div>
+          <? } ?>
+      </fieldset>
+
+      <label for="outcomeNotes">Additional notes, if useful:</label>
+      <input type="text" id="outcomeNotes" name="outcomeNotes">
+
+      <input type="text" hidden id="username" name="username" value="<?= userToCall.username ?>" />
+
+      <br />
+
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+</html>

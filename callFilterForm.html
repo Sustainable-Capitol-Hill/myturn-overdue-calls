@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base target="_top">
+
+    <script>
+      function onSubmit(formObject) {
+        google.script.run
+          // Close the modal once the form is submitted and the next dialog opens
+          .withSuccessHandler(google.script.host.close)
+          .initiateCallDialog(formObject)
+      }
+    </script>
+  </head>
+
+  <body>
+    <form id="callForm" onsubmit="event.preventDefault(); onSubmit(this);">
+      <label for="itemNameToSearch">What item(s) would you like to call about? This will filter your phone call down to <i>just</i> patrons with those items overdue. Text is not case sensitive, and you can use substrings (eg, search <code>sew</code> to find sewing machines).</label>
+
+      <br />
+
+      <input type="text" required id="itemNameToSearch" name="itemNameToSearch">
+
+      <br />
+
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+</html>
