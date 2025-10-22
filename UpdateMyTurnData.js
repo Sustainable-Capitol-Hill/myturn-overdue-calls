@@ -2,7 +2,7 @@ function updateMyTurnSheetsData() {
   const sessionIdCookie = getAuthenticatedSessionCookie();
 
   const overdueSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
-    "MyTurn Report: Loans, Overdue Only",
+    "MyTurn Report: Loans, Overdue Only"
   );
   // This appears to be an internal MyTurn customer ID for our organization
   const locationId = "66";
@@ -34,7 +34,7 @@ function updateMyTurnSheetsData() {
       headers: {
         Cookie: sessionIdCookie,
       },
-    },
+    }
   );
   const overdueData = Utilities.parseCsv(overdueResponse.getContentText());
   overdueSheet.clear();
@@ -43,7 +43,7 @@ function updateMyTurnSheetsData() {
     .setValues(overdueData);
 
   const checkedOutSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
-    "MyTurn Report: Inventory, List Items, Checked Out",
+    "MyTurn Report: Inventory, List Items, Checked Out"
   );
   const checkedOutResponse = UrlFetchApp.fetch(
     "https://capitolhill.myturn.com/library/orgInventory/exportItemList",
@@ -56,10 +56,10 @@ function updateMyTurnSheetsData() {
       headers: {
         Cookie: sessionIdCookie,
       },
-    },
+    }
   );
   const checkedOutData = Utilities.parseCsv(
-    checkedOutResponse.getContentText(),
+    checkedOutResponse.getContentText()
   );
   checkedOutSheet.clear();
   checkedOutSheet
@@ -86,7 +86,7 @@ function getAuthenticatedSessionCookie() {
         j_password: password,
       },
       followRedirects: false,
-    },
+    }
   );
   const sessionIdCookie = loginResponse
     .getAllHeaders()

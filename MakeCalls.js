@@ -45,7 +45,7 @@ function processCallForm(formObject) {
     new Date().toLocaleDateString("en-US"),
     formObject.username,
     formObject.outcomeCategory,
-    formObject.outcomeNotes,
+    formObject.outcomeNotes
   );
 }
 
@@ -94,7 +94,7 @@ function initiateCallDialog(filters) {
       return (
         new Date(
           new Date(user["latest due date"]).getTime() +
-            minimumDaysOverdue * 24 * 60 * 60 * 1000,
+            minimumDaysOverdue * 24 * 60 * 60 * 1000
         ) < new Date()
       );
     })
@@ -106,7 +106,7 @@ function initiateCallDialog(filters) {
         // Source: https://stackoverflow.com/questions/7687884/add-10-seconds-to-a-date
         new Date(
           new Date(user["most recent call"]).getTime() +
-            minimumDaysSinceLastCall * 24 * 60 * 60 * 1000,
+            minimumDaysSinceLastCall * 24 * 60 * 60 * 1000
         ) < new Date()
       );
     })
