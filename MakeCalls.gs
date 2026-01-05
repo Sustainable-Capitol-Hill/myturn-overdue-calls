@@ -4,8 +4,12 @@
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu("Make Calls")
-    .addItem("Initiate call", "initiateCallDialog")
+    .addItem(
+      "Initiate call for high-value items",
+      "initiateHigherValueCallDialog"
+    )
     .addItem("Initiate call for specific item", "initiateFilteredCallDialog")
+    .addItem("Initiate call for any item", "initiateCallDialog")
     .addToUi();
 }
 
@@ -21,6 +25,30 @@ var CALL_OUTCOME_CATEGORIES = {
   FAILED_WRONG_NUMBER: "📵 Phone number appears to be associated with a different person",
   FAILED_INVALID_NUMBER: "📵 Phone number is incomplete, invalid, or missing",
 };
+
+function getParentTaxonName(taxonName) {
+  const ROOT_TAXON_ID = 1;
+
+  // Not being able to use `let`s or `Array.find` in this JS engine is annoying
+  var taxonParentId;
+  var parentTaxon;
+  MY_TURN_ITEM_TAXONOMY.forEach(function (taxon) {
+    if (taxon.name === taxonName) {
+      taxonParentId = taxon.parent;
+    }
+  });
+  MY_TURN_ITEM_TAXONOMY.forEach(function (taxon) {
+    if (taxon.id === taxonParentId) {
+      parentTaxon = taxon;
+    }
+  });
+
+  if (parentTaxon && parentTaxon.id !== ROOT_TAXON_ID) {
+    return parentTaxon.name;
+  } else {
+    return null;
+  }
+}
 
 function getRandomItemFromArray(items) {
   return items[Math.floor(Math.random() * items.length)];
@@ -88,6 +116,9 @@ function initiateCallDialog(filters) {
       ? filters.minimumDaysSinceLastCall
       : 14;
   const itemNameToSearch = filters && filters.itemNameToSearch;
+  const onlyHigherValueItems =
+    (filters && filters.onlyHigherValueItems) || false;
+  const alwaysCallIfAtLeastXItemsOverdue = 8;
 
   const usersToCall = getAllOverdueUsers()
     .filter(function (user) {
@@ -117,6 +148,41 @@ function initiateCallDialog(filters) {
       );
     })
     .filter(function (user) {
+      if (!onlyHigherValueItems) {
+        return true;
+      }
+
+      const itemTypes = user["overdue item types"].split(";");
+
+      if (itemTypes.length >= alwaysCallIfAtLeastXItemsOverdue) {
+        return true;
+      }
+
+      // Ugh, `Set`s aren't supported in this engine either
+      const allItemTypesToCheck = [];
+      itemTypes.forEach(function (itemType) {
+        if (allItemTypesToCheck.indexOf(itemType) === -1) {
+          allItemTypesToCheck.push(itemType);
+        }
+
+        var parentTaxonName = itemType;
+        while (true) {
+          parentTaxonName = getParentTaxonName(parentTaxonName);
+          if (parentTaxonName === null) {
+            break;
+          }
+          if (allItemTypesToCheck.indexOf(parentTaxonName) === -1) {
+            allItemTypesToCheck.push(parentTaxonName);
+          }
+        }
+      });
+
+      console.log(allItemTypesToCheck);
+      return allItemTypesToCheck.some(function (itemType) {
+        return MY_TURN_HIGH_VALUE_TAXA.indexOf(itemType) > -1;
+      });
+    })
+    .filter(function (user) {
       return !user["should mark items as lost by member?"];
     });
 
@@ -135,4 +201,8 @@ function initiateCallDialog(filters) {
 function initiateFilteredCallDialog() {
   const t = HtmlService.createHtmlOutputFromFile("callFilterForm");
   SpreadsheetApp.getUi().showModalDialog(t, "Filter your overdue call");
+}
+
+function initiateHigherValueCallDialog() {
+  initiateCallDialog({ onlyHigherValueItems: true });
 }
