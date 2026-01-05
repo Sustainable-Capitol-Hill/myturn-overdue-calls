@@ -4,10 +4,7 @@
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu("Make Calls")
-    .addItem(
-      "Initiate call",
-      "initiateHigherValueCallDialog"
-    )
+    .addItem("Initiate call", "initiateHigherValueCallDialog")
     .addItem("Initiate call for specific item", "initiateFilteredCallDialog")
     .addItem("Initiate call, including low-value items", "initiateCallDialog")
     .addToUi();
@@ -148,6 +145,9 @@ function initiateCallDialog(filters) {
       );
     })
     .filter(function (user) {
+      return !user["should mark items as lost by member?"];
+    })
+    .filter(function (user) {
       if (!onlyHigherValueItems) {
         return true;
       }
@@ -177,13 +177,9 @@ function initiateCallDialog(filters) {
         }
       });
 
-      console.log(allItemTypesToCheck);
       return allItemTypesToCheck.some(function (itemType) {
         return MY_TURN_HIGH_VALUE_TAXA.indexOf(itemType) > -1;
       });
-    })
-    .filter(function (user) {
-      return !user["should mark items as lost by member?"];
     });
 
   if (usersToCall.length === 0) {
