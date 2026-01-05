@@ -17,6 +17,7 @@ var MY_TURN_HIGH_VALUE_TAXA = [
   "Meters & Diagnostics",
   "Power Tools",
   "Chainsaws",
+  "Fruit Presses",
   "Welding",
   "Wheelbarrows & Wagons",
 ];

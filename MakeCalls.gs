@@ -5,11 +5,11 @@ function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu("Make Calls")
     .addItem(
-      "Initiate call for high-value items",
+      "Initiate call",
       "initiateHigherValueCallDialog"
     )
     .addItem("Initiate call for specific item", "initiateFilteredCallDialog")
-    .addItem("Initiate call for any item", "initiateCallDialog")
+    .addItem("Initiate call, including low-value items", "initiateCallDialog")
     .addToUi();
 }
 
