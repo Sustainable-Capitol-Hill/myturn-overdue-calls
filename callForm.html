@@ -58,7 +58,7 @@
       that you checked out in
       <!-- Can't have extra formatting spaces in this string, or the period will get a space before it -->
       <!-- Also, can't use `toLocaleDateString` since this code executes in an older Rhino JavaScript runtime -->
-      <?= ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][userToCall['first checked out date'].getMonth()] ?><? if (userToCall['first checked out date'].getFullYear() !== (new Date()).getFullYear()) { ?> <?= userToCall['first checked out date'].getFullYear() ?><? } ?>.
+      <?= ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][userToCall['first checked out date'].getMonth()] ?><? if (userToCall['first checked out date'].getFullYear() + 1 <= (new Date()).getFullYear() && userToCall['first checked out date'].getMonth() <= (new Date()).getMonth()) { ?> <?= userToCall['first checked out date'].getFullYear() ?><? } ?>.
       <? if (userToCall['overdue item names'].split(";").length > 1) { ?>
         Specifically, the items to return are:
         <?= userToCall['overdue item names'].split(";").join("; ") ?>.

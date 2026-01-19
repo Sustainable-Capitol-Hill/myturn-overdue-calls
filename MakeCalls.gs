@@ -115,7 +115,7 @@ function initiateCallDialog(filters) {
   const itemNameToSearch = filters && filters.itemNameToSearch;
   const onlyHigherValueItems =
     (filters && filters.onlyHigherValueItems) || false;
-  const alwaysCallIfAtLeastXItemsOverdue = 8;
+  const alwaysCallIfAtLeastXItemsOverdue = 7;
 
   const usersToCall = getAllOverdueUsers()
     .filter(function (user) {

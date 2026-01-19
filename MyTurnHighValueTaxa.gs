@@ -3,7 +3,6 @@
 // modules, we need to use `var` here instead of `const` to avoid an error
 var MY_TURN_HIGH_VALUE_TAXA = [
   "Computers",
-  "Work Lights",
   "Sewing Machines",
   "Appliances",
   "Kitchen Appliances",
