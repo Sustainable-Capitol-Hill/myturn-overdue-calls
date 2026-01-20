@@ -107,7 +107,7 @@ function initiateCallDialog(filters) {
   const minimumDaysOverdue =
     filters && typeof filters.minimumDaysOverdue === "number"
       ? filters.minimumDaysOverdue
-      : 45;
+      : 60;
   const minimumDaysSinceLastCall =
     filters && typeof filters.minimumDaysSinceLastCall === "number"
       ? filters.minimumDaysSinceLastCall
