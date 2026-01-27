@@ -141,7 +141,9 @@ function initiateCallDialog(filters) {
     .filter(function (user) {
       return (
         !itemNameToSearch ||
-        user["overdue item names"].toLowerCase().indexOf(itemNameToSearch) > -1
+        user["overdue item names"]
+          .toLowerCase()
+          .indexOf(itemNameToSearch.toLowerCase()) > -1
       );
     })
     .filter(function (user) {
