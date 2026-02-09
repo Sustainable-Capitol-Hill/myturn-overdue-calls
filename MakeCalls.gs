@@ -76,7 +76,7 @@ function processCallForm(formObject) {
 
 function insertCallsMadeRow(date, username, outcomeCategory, outcomeNotes) {
   const callsSheet =
-    SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Calls Made");
+    SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log of Calls Made");
   const callsColumnCount = callsSheet.getMaxColumns();
   callsSheet.insertRowAfter(1);
   callsSheet
@@ -85,8 +85,9 @@ function insertCallsMadeRow(date, username, outcomeCategory, outcomeNotes) {
 }
 
 function getAllOverdueUsers() {
-  const usersToCallSheet =
-    SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Users To Call");
+  const usersToCallSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
+    "Users with Overdue Items"
+  );
   const usersToCallColumnCount = usersToCallSheet.getMaxColumns();
   const usersToCallHeaders = usersToCallSheet
     .getRange(1, 1, 1, usersToCallColumnCount)
@@ -116,6 +117,20 @@ function initiateCallDialog(filters) {
   const onlyHigherValueItems =
     (filters && filters.onlyHigherValueItems) || false;
   const alwaysCallIfAtLeastXItemsOverdue = 7;
+
+  const highValueTaxaSheet =
+    SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
+      "Configuration: MyTurn High-Value Item Taxonomies"
+    );
+  const myTurnHighValueTaxa = highValueTaxaSheet
+    .getRange(1, 1, highValueTaxaSheet.getMaxRows(), 1)
+    .getValues()
+    .reduce(function (itemTypes, row) {
+      return itemTypes.concat(row[0])
+    }, [])
+    .filter(function (i) {
+      return Boolean(i);
+    });
 
   const usersToCall = getAllOverdueUsers()
     .filter(function (user) {
@@ -180,7 +195,7 @@ function initiateCallDialog(filters) {
       });
 
       return allItemTypesToCheck.some(function (itemType) {
-        return MY_TURN_HIGH_VALUE_TAXA.indexOf(itemType) > -1;
+        return myTurnHighValueTaxa.indexOf(itemType) > -1;
       });
     });
 
