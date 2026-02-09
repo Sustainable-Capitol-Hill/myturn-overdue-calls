@@ -136,7 +136,7 @@ function initiateCallDialog(filters) {
     .filter(function (user) {
       return (
         new Date(
-          new Date(user["latest due date"]).getTime() +
+          new Date(user["Latest Due Date"]).getTime() +
             minimumDaysOverdue * 24 * 60 * 60 * 1000
         ) < new Date()
       );
@@ -144,11 +144,11 @@ function initiateCallDialog(filters) {
     .filter(function (user) {
       // Has never been called or…
       return (
-        !user["most recent call"] ||
+        !user["Most Recent Call"] ||
         // …hasn't been called in at least the past X days
         // Source: https://stackoverflow.com/questions/7687884/add-10-seconds-to-a-date
         new Date(
-          new Date(user["most recent call"]).getTime() +
+          new Date(user["Most Recent Call"]).getTime() +
             minimumDaysSinceLastCall * 24 * 60 * 60 * 1000
         ) < new Date()
       );
@@ -156,7 +156,7 @@ function initiateCallDialog(filters) {
     .filter(function (user) {
       return (
         !itemNameToSearch ||
-        user["overdue item names"]
+        user["Overdue Item Names"]
           .toLowerCase()
           .indexOf(itemNameToSearch.toLowerCase()) > -1
       );
@@ -169,7 +169,7 @@ function initiateCallDialog(filters) {
         return true;
       }
 
-      const itemTypes = user["overdue item types"].split(";");
+      const itemTypes = user["Overdue Item Types"].split(";");
 
       if (itemTypes.length >= alwaysCallIfAtLeastXItemsOverdue) {
         return true;

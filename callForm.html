@@ -18,63 +18,63 @@
     <p>
       Patron:
       <!-- prettier-ignore -->
-      <a href="https://capitolhill.myturn.com/library/orgMembership/searchUsers?load=true&keyword=<?= userToCall['username'] ?>">
-        <?= userToCall['first name'] ?> <?= userToCall['last name'] ?>
+      <a href="https://capitolhill.myturn.com/library/orgMembership/searchUsers?load=true&keyword=<?= userToCall['Username'] ?>">
+        <?= userToCall['First Name'] ?> <?= userToCall['Last Name'] ?>
       </a>
     </p>
     <p>
       Phone number:
       <!-- prettier-ignore -->
-      <a href="tel:<?= userToCall['phone number'] ?>">
-        <?= userToCall['phone number'] ?>
+      <a href="tel:<?= userToCall['Phone Number'] ?>">
+        <?= userToCall['Phone Number'] ?>
       </a>
     </p>
     <!-- prettier-ignore -->
     <p>
-      Overdue item<? if (userToCall['overdue item names'].split(";").length > 1) { ?>s<? } ?>:
-      <? for (var i = 0; i < userToCall['overdue item IDs'].split(",").length; i++) { ?>
-        <a href="https://capitolhill.myturn.com/library/inventory/browse?q=<?= userToCall['overdue item IDs'].split(',')[i] ?>"><?= userToCall['overdue item names'].split(';')[i] ?></a><? if (i + 1 < userToCall['overdue item IDs'].split(",").length) { ?>,<? } ?>
+      Overdue item<? if (userToCall['Overdue Item Names'].split(";").length > 1) { ?>s<? } ?>:
+      <? for (var i = 0; i < userToCall['Overdue Item IDs'].split(",").length; i++) { ?>
+        <a href="https://capitolhill.myturn.com/library/inventory/browse?q=<?= userToCall['Overdue Item IDs'].split(',')[i] ?>"><?= userToCall['Overdue Item Names'].split(';')[i] ?></a><? if (i + 1 < userToCall['Overdue Item IDs'].split(",").length) { ?>,<? } ?>
       <? } ?>
     </p>
     <!-- prettier-ignore -->
     <p>
-      Overdue item<? if (userToCall['overdue item names'].split(";").length > 1) { ?>s<? } ?> initially checked out:
-      <?= userToCall['first checked out date'].toLocaleDateString() ?>
+      Overdue item<? if (userToCall['Overdue Item Names'].split(";").length > 1) { ?>s<? } ?> initially checked out:
+      <?= userToCall['First Checked Out'].toLocaleDateString() ?>
     </p>
 
     <h3>Suggested voicemail script</h3>
     <p>
-      Hi <?= userToCall['first name'] ?>, this is <b><i>[your name]</i></b> from
+      Hi <?= userToCall['First Name'] ?>, this is <b><i>[your name]</i></b> from
       the Capitol Hill Tool Library.
     </p>
     <!-- prettier-ignore -->
     <p>
       I'm calling to remind you to return the
-      <? if (userToCall['overdue item names'].split(";").length > 1) { ?>
-        <?= userToCall['overdue item names'].split(";").length ?> overdue items
+      <? if (userToCall['Overdue Item Names'].split(";").length > 1) { ?>
+        <?= userToCall['Overdue Item Names'].split(";").length ?> overdue items
       <? } else { ?>
-        overdue <?=userToCall['overdue item names'] ?>
+        overdue <?=userToCall['Overdue Item Names'] ?>
       <? } ?>
       that you checked out in
       <!-- Can't have extra formatting spaces in this string, or the period will get a space before it -->
       <!-- Also, can't use `toLocaleDateString` since this code executes in an older Rhino JavaScript runtime -->
-      <?= ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][userToCall['first checked out date'].getMonth()] ?><? if (userToCall['first checked out date'].getFullYear() + 1 <= (new Date()).getFullYear() && userToCall['first checked out date'].getMonth() <= (new Date()).getMonth()) { ?> <?= userToCall['first checked out date'].getFullYear() ?><? } ?>.
-      <? if (userToCall['overdue item names'].split(";").length > 1) { ?>
+      <?= ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][userToCall['First Checked Out'].getMonth()] ?><? if (userToCall['First Checked Out'].getFullYear() + 1 <= (new Date()).getFullYear() && userToCall['First Checked Out'].getMonth() <= (new Date()).getMonth()) { ?> <?= userToCall['First Checked Out'].getFullYear() ?><? } ?>.
+      <? if (userToCall['Overdue Item Names'].split(";").length > 1) { ?>
         Specifically, the items to return are:
-        <?= userToCall['overdue item names'].split(";").join("; ") ?>.
+        <?= userToCall['Overdue Item Names'].split(";").join("; ") ?>.
       <? } ?>
     </p>
     <!-- prettier-ignore -->
     <p>
       Please return
-      <? if (userToCall['overdue item names'].split(";").length >
+      <? if (userToCall['Overdue Item Names'].split(";").length >
       1) { ?>
         these
       <? } else { ?>
         this item
       <? } ?>
       in the coming week, so that
-      <? if (userToCall['overdue item names'].split(";").length > 1) { ?>
+      <? if (userToCall['Overdue Item Names'].split(";").length > 1) { ?>
         they
       <? } else { ?>
         it
@@ -116,7 +116,7 @@
         hidden
         id="username"
         name="username"
-        value="<?= userToCall.username ?>"
+        value="<?= userToCall.Username ?>"
       />
 
       <br />
