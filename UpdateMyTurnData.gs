@@ -1,13 +1,17 @@
 function updateMyTurnSheetsData() {
   const sessionIdCookie = getAuthenticatedSessionCookie();
 
+  const config = getConfiguration();
+
   const overdueSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
     "MyTurn Report: Loans, Overdue Only"
   );
   // This appears to be an internal MyTurn customer ID for our organization
   const locationId = "66";
   const overdueResponse = UrlFetchApp.fetch(
-    "https://capitolhill.myturn.com/library/orgLoan/exportLoans",
+    "https://" +
+      config["MyTurn Subdomain"] +
+      ".myturn.com/library/orgLoan/exportLoans",
     {
       method: "post",
       payload: {
@@ -46,7 +50,9 @@ function updateMyTurnSheetsData() {
     "MyTurn Report: Inventory, List Items, Checked Out"
   );
   const checkedOutResponse = UrlFetchApp.fetch(
-    "https://capitolhill.myturn.com/library/orgInventory/exportItemList",
+    "https://" +
+      config["MyTurn Subdomain"] +
+      ".myturn.com/library/orgInventory/exportItemList",
     {
       method: "post",
       payload: {
@@ -77,8 +83,11 @@ function getAuthenticatedSessionCookie() {
   const username = userProperties.getProperty("myturn-username");
   const password = userProperties.getProperty("myturn-password");
 
+  const config = getConfiguration();
   const loginResponse = UrlFetchApp.fetch(
-    "https://capitolhill.myturn.com/library/j_spring_security_check",
+    "https://" +
+      config["MyTurn Subdomain"] +
+      ".myturn.com/library/j_spring_security_check",
     {
       method: "post",
       payload: {

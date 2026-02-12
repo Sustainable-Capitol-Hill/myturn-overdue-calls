@@ -104,19 +104,17 @@ function getAllOverdueUsers() {
 }
 
 function initiateCallDialog(filters) {
-  // Set filter defaults
+  // Fetch some filters from the spreadsheet's configuration
+  const config = getConfiguration();
   const minimumDaysOverdue =
-    filters && typeof filters.minimumDaysOverdue === "number"
-      ? filters.minimumDaysOverdue
-      : 60;
+    Number(config["Days Overdue Before First Call"]) || 60;
   const minimumDaysSinceLastCall =
-    filters && typeof filters.minimumDaysSinceLastCall === "number"
-      ? filters.minimumDaysSinceLastCall
-      : 14;
+    Number(config["Minimum Days Between Calls"]) || 14;
+
+  // Set filter defaults
   const itemNameToSearch = filters && filters.itemNameToSearch;
   const onlyHigherValueItems =
     (filters && filters.onlyHigherValueItems) || false;
-  const alwaysCallIfAtLeastXItemsOverdue = 7;
 
   const highValueTaxaSheet =
     SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
@@ -126,7 +124,7 @@ function initiateCallDialog(filters) {
     .getRange(1, 1, highValueTaxaSheet.getMaxRows(), 1)
     .getValues()
     .reduce(function (itemTypes, row) {
-      return itemTypes.concat(row[0])
+      return itemTypes.concat(row[0]);
     }, [])
     .filter(function (i) {
       return Boolean(i);
@@ -171,10 +169,6 @@ function initiateCallDialog(filters) {
 
       const itemTypes = user["Overdue Item Types"].split(";");
 
-      if (itemTypes.length >= alwaysCallIfAtLeastXItemsOverdue) {
-        return true;
-      }
-
       // Ugh, `Set`s aren't supported in this engine either
       const allItemTypesToCheck = [];
       itemTypes.forEach(function (itemType) {
@@ -206,6 +200,7 @@ function initiateCallDialog(filters) {
   const userToCall = getRandomItemFromArray(usersToCall);
 
   const t = HtmlService.createTemplateFromFile("callForm");
+  t.config = getConfiguration();
   t.outcomeCategories = CALL_OUTCOME_CATEGORIES;
   t.userToCall = userToCall;
   SpreadsheetApp.getUi().showModalDialog(t.evaluate(), "Overdue call to make");

@@ -18,7 +18,7 @@
     <p>
       Patron:
       <!-- prettier-ignore -->
-      <a href="https://capitolhill.myturn.com/library/orgMembership/searchUsers?load=true&keyword=<?= userToCall['Username'] ?>">
+      <a href="https://<?= config['MyTurn Subdomain'] ?>.myturn.com/library/orgMembership/searchUsers?load=true&keyword=<?= userToCall['Username'] ?>">
         <?= userToCall['First Name'] ?> <?= userToCall['Last Name'] ?>
       </a>
     </p>
@@ -33,7 +33,7 @@
     <p>
       Overdue item<? if (userToCall['Overdue Item Names'].split(";").length > 1) { ?>s<? } ?>:
       <? for (var i = 0; i < userToCall['Overdue Item IDs'].split(",").length; i++) { ?>
-        <a href="https://capitolhill.myturn.com/library/inventory/browse?q=<?= userToCall['Overdue Item IDs'].split(',')[i] ?>"><?= userToCall['Overdue Item Names'].split(';')[i] ?></a><? if (i + 1 < userToCall['Overdue Item IDs'].split(",").length) { ?>,<? } ?>
+        <a href="https://<?= config['MyTurn Subdomain'] ?>.myturn.com/library/inventory/browse?q=<?= userToCall['Overdue Item IDs'].split(',')[i] ?>"><?= userToCall['Overdue Item Names'].split(';')[i] ?></a><? if (i + 1 < userToCall['Overdue Item IDs'].split(",").length) { ?>,<? } ?>
       <? } ?>
     </p>
     <!-- prettier-ignore -->
@@ -45,7 +45,7 @@
     <h3>Suggested voicemail script</h3>
     <p>
       Hi <?= userToCall['First Name'] ?>, this is <b><i>[your name]</i></b> from
-      the Capitol Hill Tool Library.
+      the <?= config['Tool Library Name'] ?>.
     </p>
     <!-- prettier-ignore -->
     <p>
@@ -80,8 +80,7 @@
         it
       <? } ?>
       can be re-used by others in the community. The tool library is open
-      Monday through Thursday from 6 to 9 PM, Saturday 9 AM to noon, and
-      Sunday 4 to 7 PM.
+      <?= config['Open Hours Text'] ?>.
     </p>
     <p>Thank you!</p>
 
