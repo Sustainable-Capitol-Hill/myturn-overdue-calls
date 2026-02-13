@@ -3,11 +3,11 @@ function updateMyTurnSheetsData() {
 
   const config = getConfiguration();
 
+  const locationId = getLocationId(sessionIdCookie);
+
   const overdueSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
     "MyTurn Report: Loans, Overdue Only"
   );
-  // This appears to be an internal MyTurn customer ID for our organization
-  const locationId = "66";
   const overdueResponse = UrlFetchApp.fetch(
     "https://" +
       config["MyTurn Subdomain"] +
@@ -109,4 +109,30 @@ function getAuthenticatedSessionCookie() {
     })[0];
 
   return sessionIdCookie;
+}
+
+function getLocationId(sessionIdCookie) {
+  // Location ID is an internal MyTurn numeric identifier (potentially for tool
+  // libraries with multiple physical locations?) required for some admin report
+  // requests
+  const config = getConfiguration();
+
+  const res = UrlFetchApp.fetch(
+    "https://" +
+      config["MyTurn Subdomain"] +
+      ".myturn.com/library/orgLoan/reportParameters",
+    {
+      method: "get",
+      headers: {
+        Cookie: sessionIdCookie,
+      },
+    }
+  );
+  // In an ideal world we'd use an HTML parsing library for this, but no
+  // need to introduce that dependency for something this simple and static
+  const locationId = res
+    .getContentText()
+    .match(/name="location\.id" value="(\d+)"/)[1];
+
+  return locationId;
 }
