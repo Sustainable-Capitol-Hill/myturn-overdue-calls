@@ -26,8 +26,31 @@ Your Google Sheet has a `Configuration` sheet with cells that you can edit to id
 
 #### `Configuration: MyTurn High-Value Item Taxonomies` sheet
 
-_TODO_
+> [!TIP]
+> Populating this sheet's values is _optional_; it is fine to leave it blank.
+
+You can use this sheet to limit which categories of items are eligible for patrons to get phoned about.
+
+Sometimes a patron may have long-overdue items, but these items are of low financial value (and your tool library has many copies of that item). For example, if a patron just has a hand saw and a paintbrush checked out, you may decide it's not ever worth phoning them. This `Configuration: MyTurn High-Value Item Taxonomies` sheet solves that issue.
+
+To populate this configuration sheet, identify which `Type`s of MyTurn items in your tool library's inventory _are_ worth phoning patrons about, and put those types into cells in the first column (column `A`) of the sheet.
+
+You can see the tree of all MyTurn item types by clicking on `Add Item` in your MyTurn's admin panel. The types are nested within each other: for instance, the `Power Tools` item type is a subset of the `Tools` item type, and `Jointers` is a subset of `Corded & Plug-in`; if you'd like to include all patrons with an overdue power tool in your phone calls, then put `Power Tools` into one of the column `A` cells in your `Configuration: MyTurn High-Value Item Taxonomies` sheet.
+
+You may populate item type names in as many cells in this sheet as you would like. Conversely, if all this sheet's cells are blank/empty, then _all_ items will be eligible for overdue phone calls.
 
 ### Configuration within the sheet's Apps Script interface
 
 _TODO_
+
+## Contributing
+
+Install and use [`clasp`](https://github.com/google/clasp) on your command line to deploy changes that you make to the Apps Script. You should _not_ make edits to the Apps Script in the browser, only via `clasp`.
+
+You'll need to `clasp login` and then `clasp clone` the already-deployed Apps Script in order to get started. This will create a (`.gitignore`'d) `.clasp.json` file that holds the script's deployed location and ID.
+
+`clasp push` will immediately deploy any changes to the Google Sheets documents that use it. Typically, you don't even need to refresh the Google Sheets's browser window before you see the results of your code changes.
+
+## Changelog
+
+- February _TODO_, 2026: Initial public release

@@ -2,12 +2,22 @@
 // See discussion on https://stackoverflow.com/questions/60230776/were-sorry-a-server-error-occurred-while-reading-from-storage-error-code-perm
 
 function onOpen() {
-  SpreadsheetApp.getUi()
+  const menu = SpreadsheetApp.getUi()
     .createMenu("Make Calls")
     .addItem("Initiate call", "initiateHigherValueCallDialog")
-    .addItem("Initiate call for specific item", "initiateFilteredCallDialog")
-    .addItem("Initiate call, including low-value items", "initiateCallDialog")
-    .addToUi();
+    .addItem("Initiate call for specific item", "initiateFilteredCallDialog");
+
+  // If high-value taxonomies haven't been identified, then there's no distinction
+  // between this option and the default "Initiate call" option
+  const highValueTaxa = getHighValueTaxa();
+  if (highValueTaxa.length > 0) {
+    menu.addItem(
+      "Initiate call, including low-value items",
+      "initiateCallDialog"
+    );
+  }
+
+  menu.addToUi();
 }
 
 // prettier-ignore
@@ -103,19 +113,7 @@ function getAllOverdueUsers() {
   return usersToCall;
 }
 
-function initiateCallDialog(filters) {
-  // Fetch some filters from the spreadsheet's configuration
-  const config = getConfiguration();
-  const minimumDaysOverdue =
-    Number(config["Days Overdue Before First Call"]) || 60;
-  const minimumDaysSinceLastCall =
-    Number(config["Minimum Days Between Calls"]) || 14;
-
-  // Set filter defaults
-  const itemNameToSearch = filters && filters.itemNameToSearch;
-  const onlyHigherValueItems =
-    (filters && filters.onlyHigherValueItems) || false;
-
+function getHighValueTaxa() {
   const highValueTaxaSheet =
     SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
       "Configuration: MyTurn High-Value Item Taxonomies"
@@ -129,6 +127,24 @@ function initiateCallDialog(filters) {
     .filter(function (i) {
       return Boolean(i);
     });
+
+  return myTurnHighValueTaxa;
+}
+
+function initiateCallDialog(filters) {
+  // Fetch some filters from the spreadsheet's configuration
+  const config = getConfiguration();
+  const minimumDaysOverdue =
+    Number(config["Days Overdue Before First Call"]) || 60;
+  const minimumDaysSinceLastCall =
+    Number(config["Minimum Days Between Calls"]) || 14;
+
+  // Set filter defaults
+  const itemNameToSearch = filters && filters.itemNameToSearch;
+  const onlyHigherValueItems =
+    (filters && filters.onlyHigherValueItems) || false;
+
+  const highValueTaxa = getHighValueTaxa();
 
   const usersToCall = getAllOverdueUsers()
     .filter(function (user) {
@@ -188,9 +204,12 @@ function initiateCallDialog(filters) {
         }
       });
 
-      return allItemTypesToCheck.some(function (itemType) {
-        return myTurnHighValueTaxa.indexOf(itemType) > -1;
-      });
+      return (
+        highValueTaxa.length === 0 ||
+        allItemTypesToCheck.some(function (itemType) {
+          return highValueTaxa.indexOf(itemType) > -1;
+        })
+      );
     });
 
   if (usersToCall.length === 0) {
