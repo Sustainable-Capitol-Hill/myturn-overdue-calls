@@ -1,10 +1,23 @@
 # Make MyTurn Overdue Calls
 
-This is a Google Apps Script project that (when combined with its Google Sheet) helps your tool library identify and make phone calls to MyTurn patrons with long-overdue items. This both encourages returns, and (if the items are not returned within a set period of time) prompts you to update your tool library's MyTurn inventory to reflect that those tools are permanently lost.
+## Overview
 
-This Google Apps Script project includes code to authenticate with and pull data from your [MyTurn](https://myturn.com) instance, and another module to add a [custom menu](https://developers.google.com/apps-script/guides/menus) to the Google Sheet to streamline staff phone calls to patrons with long-overdue items.
+This is a Google Apps Script project that (when combined with its Google Sheet) helps your tool library staff identify and make phone calls to [MyTurn](https://myturn.com) patrons with long-overdue items. This both encourages returns, and (if the items are not returned within a set period of time) prompts you to update your tool library's MyTurn inventory to reflect that those tools are permanently lost.
 
-## Setup
+### Benefits
+
+- Having more accurate information on which items likely won't ever be returned helps your tool library purchase/solicit more of those items (if needed)
+- Likewise, having more accurate information helps patrons too: they won't have to wonder as much whether that "overdue" item they're waiting on is actually going to come back
+- Being prompted to set warnings on delinquent patrons' accounts enables your tool library to prevent them from abusing checkouts in the future, until the original items are returned
+
+### What the Google Sheet and this Apps Script project enable
+
+- They automatically pull overdue item data from your tool library's MyTurn on a daily basis
+- They identify patrons who have inventory checked out that is long-overdue, and who haven't already been phoned recently
+- They provide a [custom menu](https://developers.google.com/apps-script/guides/menus) in the Google Sheets menu bar. When clicked, a modal will pop up with information to call a patron, and a suggested script for if the call goes to voicemail.
+- If a patron has been phoned multiple times already and we've waited a week, then the Google Sheet identifies them so that tool library staff can `disable` their items and add a warning note to their MyTurn user
+
+## Initial, one-time configuration
 
 ### Configuration within the Google Sheet
 
@@ -26,7 +39,7 @@ Your Google Sheet has a `Configuration` sheet with cells that you can edit to id
 
 #### `Configuration: MyTurn High-Value Item Taxonomies` sheet
 
-> [!TIP]
+> [!NOTE]
 > Populating this sheet's values is _optional_; it is fine to leave it blank.
 
 You can use this sheet to limit which categories of items are eligible for patrons to get phoned about.
@@ -43,7 +56,25 @@ You may populate item type names in as many cells in this sheet as you would lik
 
 _TODO_
 
-## Contributing
+## How to use
+
+> [!NOTE]
+> This Google Sheet includes functionality from a Google Apps Script, and therefore you can only use this document on a computer, not on a smartphone.
+
+![screenshot of custom menu](screenshot-custom-menu.png)
+
+- Click on the custom menu `Make Calls` -> `Initiate call`
+  - The first time you click this, you will be asked to allow permissions for this document's Apps Script. Approve this request.
+- `Make Calls` -> `Initiate call` will open a dialog box with information on a specific patron to phone, their overdue items, a suggested voicemail script in case they don't pick up, and a form to record the outcome of your call
+  - If you'd like to avoid patrons having your personal phone number, consider placing calls using your tool library's phone or VoIP line, if possible
+- Once you complete the call, fill out that form and click `Submit`. The dialog box will close, and you can start another call.
+
+Every week or two, someone at your tool library should review the `Should Mark Items as Disabled?` column in the `Users with Overdue Items` sheet. If that column shows `TRUE` for a user then they have been unresponsive to calls and are unlikely to ever return those items, and you should update their items' [MyTurn statuses](https://support.myturn.com/hc/en-us/articles/206388187-Item-Statuses-e-g-On-Site-Use-Only-Sold-For-Sale-etc) to `Disabled` (or a similar, custom status that you've created to track these items, like `Never Returned`).
+
+> [!NOTE]
+> If this Google Sheet isn't functioning correctly, invite miles@sustainablecapitolhill.org as an editor and email him with specific details describing your problem.
+
+## Contributing code
 
 Install and use [`clasp`](https://github.com/google/clasp) on your command line to deploy changes that you make to the Apps Script. You should _not_ make edits to the Apps Script in the browser, only via `clasp`.
 
