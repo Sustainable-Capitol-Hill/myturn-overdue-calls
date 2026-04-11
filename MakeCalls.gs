@@ -176,7 +176,7 @@ function initiateCallDialog(filters) {
       );
     })
     .filter(function (user) {
-      return !user["should mark items as lost by member?"];
+      return !user["Should Mark Items as Disabled?"];
     })
     .filter(function (user) {
       if (!onlyHigherValueItems) {
