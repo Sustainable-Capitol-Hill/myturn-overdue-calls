@@ -7,8 +7,8 @@
 function onOpen() {
   const menu = SpreadsheetApp.getUi()
     .createMenu("Make Calls")
-    .addItem("Initiate call", "initiateHigherValueCallDialog")
-    .addItem("Initiate call for specific item", "initiateFilteredCallDialog");
+    .addItem("Initiate call", "initiateHigherValueCallDialog_")
+    .addItem("Initiate call for specific item", "initiateFilteredCallDialog_");
 
   // If high-value taxonomies haven't been identified, then there's no distinction
   // between this option and the default "Initiate call" option
@@ -16,7 +16,7 @@ function onOpen() {
   if (highValueTaxa.length > 0) {
     menu.addItem(
       "Initiate call, including low-value items",
-      "initiateCallDialog"
+      "initiateCallDialog_"
     );
   }
 
