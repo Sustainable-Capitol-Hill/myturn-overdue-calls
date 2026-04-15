@@ -1,6 +1,9 @@
 // Note: have to use ES5(?) syntax/polyfills since we deactivated the V8 JavaScript engine for this project
 // See discussion on https://stackoverflow.com/questions/60230776/were-sorry-a-server-error-occurred-while-reading-from-storage-error-code-perm
 
+/**
+ * When the spreadsheet opens, add a "Make Calls" item to the menu bar.
+ */
 function onOpen() {
   const menu = SpreadsheetApp.getUi()
     .createMenu("Make Calls")
@@ -9,7 +12,7 @@ function onOpen() {
 
   // If high-value taxonomies haven't been identified, then there's no distinction
   // between this option and the default "Initiate call" option
-  const highValueTaxa = getHighValueTaxa();
+  const highValueTaxa = getHighValueTaxa_();
   if (highValueTaxa.length > 0) {
     menu.addItem(
       "Initiate call, including low-value items",
@@ -33,7 +36,13 @@ var CALL_OUTCOME_CATEGORIES = {
   FAILED_INVALID_NUMBER: "📵 Phone number is incomplete, invalid, or missing",
 };
 
-function getParentTaxonName(taxonName) {
+/**
+ * Get the name of the parent taxon from MyTurn's item type tree.
+ *
+ * @param {string} taxonName - The name of the taxon
+ * @return {(string|null)} The name of the parent taxon, or null if it is the root of the tree
+ */
+function getParentTaxonName_(taxonName) {
   const ROOT_TAXON_ID = 1;
 
   // Not being able to use `let`s or `Array.find` in this JS engine is annoying
@@ -57,11 +66,24 @@ function getParentTaxonName(taxonName) {
   }
 }
 
-function getRandomItemFromArray(items) {
+/**
+ * Returns a random item from an array.
+ *
+ * @param {Array} items The array to select a random item from
+ * @return {*} A random item from the array
+ */
+function getRandomItemFromArray_(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function parseRowsIntoObjects(headers, rows) {
+/**
+ * Parses rows of spreadsheet data into an array of objects, using the provided headers as keys.
+ *
+ * @param {string[]} headers The spreadsheet's header row
+ * @param {Array[]} rows The rows of data
+ * @return {Object[]} An array of objects representing the spreadsheet rows
+ */
+function parseRowsIntoObjects_(headers, rows) {
   return rows.map(function (row) {
     const rowObject = {};
 
@@ -74,9 +96,19 @@ function parseRowsIntoObjects(headers, rows) {
   });
 }
 
-function processCallForm(formObject) {
-  insertCallsMadeRow(
-    // This should be in the same time zone as the user's spreadsheet (so almost always Pacific Time)
+/**
+ * Insert a new row to the call log sheet, with the outcome of a call. This has
+ * to be a separate function from `insertCallsMadeRow_` because it is called
+ * directly from the HTML form.
+ *
+ * @param {Object} formObject - The outcome of the call
+ * @param {string} formObject.username - The username who was called
+ * @param {string} formObject.outcomeCategory - The type of outcome
+ * @param {string} formObject.outcomeNotes - Additional notes about the call
+ */
+function processCallForm_(formObject) {
+  insertCallsMadeRow_(
+    // This should be in the same time zone as the user's spreadsheet
     new Date().toLocaleDateString("en-US"),
     formObject.username,
     formObject.outcomeCategory,
@@ -84,7 +116,15 @@ function processCallForm(formObject) {
   );
 }
 
-function insertCallsMadeRow(date, username, outcomeCategory, outcomeNotes) {
+/**
+ * Insert a new row to the call log sheet, with the outcome of a call.
+ *
+ * @param {string} date - The datetime of the call
+ * @param {string} username - The username who was called
+ * @param {string} outcomeCategory - The type of outcome
+ * @param {string} outcomeNotes - Additional notes about the call
+ */
+function insertCallsMadeRow_(date, username, outcomeCategory, outcomeNotes) {
   const callsSheet =
     SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log of Calls Made");
   const callsColumnCount = callsSheet.getMaxColumns();
@@ -94,7 +134,12 @@ function insertCallsMadeRow(date, username, outcomeCategory, outcomeNotes) {
     .setValues([[date, username, outcomeCategory, outcomeNotes]]);
 }
 
-function getAllOverdueUsers() {
+/**
+ * Fetch all users with overdue items from the spreadsheet.
+ *
+ * @returns {Object[]} A set of users who have overdue items
+ */
+function getAllOverdueUsers_() {
   const usersToCallSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
     "Users with Overdue Items"
   );
@@ -108,12 +153,20 @@ function getAllOverdueUsers() {
     .filter(function (i) {
       return Boolean(i[0]);
     });
-  const usersToCall = parseRowsIntoObjects(usersToCallHeaders, usersToCallRows);
+  const usersToCall = parseRowsIntoObjects_(
+    usersToCallHeaders,
+    usersToCallRows
+  );
 
   return usersToCall;
 }
 
-function getHighValueTaxa() {
+/**
+ * Reads the configuration spreadsheet for what types of items are considered high-value.
+ *
+ * @returns {string[]} The list of item types prioritized in the configuration
+ */
+function getHighValueTaxa_() {
   const highValueTaxaSheet =
     SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
       "Configuration: MyTurn High-Value Item Taxonomies"
@@ -131,9 +184,16 @@ function getHighValueTaxa() {
   return myTurnHighValueTaxa;
 }
 
+/**
+ * Initiate a call dialog for a random patron who meets the user's criteria.
+ *
+ * @param {Object} filters - The criteria to apply to the users with overdue items
+ * @param {string=} filters.itemNameToSearch - A substring that must match an item in the user's overdue cart
+ * @param {boolean=} filters.onlyHigherValueItems - Whether to only include users with high-value items checked out
+ */
 function initiateCallDialog(filters) {
   // Fetch some filters from the spreadsheet's configuration
-  const config = getConfiguration();
+  const config = getConfiguration_();
   const minimumDaysOverdue =
     Number(config["Days Overdue Before First Call"]) || 60;
   const minimumDaysSinceLastCall =
@@ -144,9 +204,9 @@ function initiateCallDialog(filters) {
   const onlyHigherValueItems =
     (filters && filters.onlyHigherValueItems) || false;
 
-  const highValueTaxa = getHighValueTaxa();
+  const highValueTaxa = getHighValueTaxa_();
 
-  const usersToCall = getAllOverdueUsers()
+  const usersToCall = getAllOverdueUsers_()
     .filter(function (user) {
       return (
         new Date(
@@ -194,7 +254,7 @@ function initiateCallDialog(filters) {
 
         var parentTaxonName = itemType;
         while (true) {
-          parentTaxonName = getParentTaxonName(parentTaxonName);
+          parentTaxonName = getParentTaxonName_(parentTaxonName);
           if (parentTaxonName === null) {
             break;
           }
@@ -216,20 +276,26 @@ function initiateCallDialog(filters) {
     return SpreadsheetApp.getUi().alert("No calls need to be made right now");
   }
 
-  const userToCall = getRandomItemFromArray(usersToCall);
+  const userToCall = getRandomItemFromArray_(usersToCall);
 
   const t = HtmlService.createTemplateFromFile("callForm");
-  t.config = getConfiguration();
+  t.config = getConfiguration_();
   t.outcomeCategories = CALL_OUTCOME_CATEGORIES;
   t.userToCall = userToCall;
   SpreadsheetApp.getUi().showModalDialog(t.evaluate(), "Overdue call to make");
 }
 
+/**
+ * Initiate a dialog to ask which item name to filter for.
+ */
 function initiateFilteredCallDialog() {
   const t = HtmlService.createHtmlOutputFromFile("callFilterForm");
   SpreadsheetApp.getUi().showModalDialog(t, "Filter your overdue call");
 }
 
+/**
+ * Initiate a call dialog for a random patron with high-value items checked out.
+ */
 function initiateHigherValueCallDialog() {
   initiateCallDialog({ onlyHigherValueItems: true });
 }

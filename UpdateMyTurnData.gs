@@ -1,9 +1,13 @@
+/**
+ * Fetches user, inventory, and checkout data from MyTurn, and populates the
+ * spreadsheet's tabs.
+ */
 function updateMyTurnSheetsData() {
-  const sessionIdCookie = getAuthenticatedSessionCookie();
+  const sessionIdCookie = getAuthenticatedSessionCookie_();
 
-  const config = getConfiguration();
+  const config = getConfiguration_();
 
-  const locationId = getLocationId(sessionIdCookie);
+  const locationId = getLocationId_(sessionIdCookie);
 
   const overdueSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(
     "MyTurn Report: Loans, Overdue Only"
@@ -73,7 +77,14 @@ function updateMyTurnSheetsData() {
     .setValues(checkedOutData);
 }
 
-function getAuthenticatedSessionCookie() {
+/**
+ * Use the MyTurn username and password stored in the Google Sheet document's
+ * "user properties" to get an authenticated session cookie for re-use by the
+ * other functions in this module.
+ *
+ * @returns {string} An authenticated session cookie
+ */
+function getAuthenticatedSessionCookie_() {
   const userProperties = PropertiesService.getUserProperties();
   // These secrets are stored as "user properties", and are therefore accessible
   // only to the Google Account who initially saved/populated them. (There's not
@@ -83,7 +94,7 @@ function getAuthenticatedSessionCookie() {
   const username = userProperties.getProperty("myturn-username");
   const password = userProperties.getProperty("myturn-password");
 
-  const config = getConfiguration();
+  const config = getConfiguration_();
   const loginResponse = UrlFetchApp.fetch(
     "https://" +
       config["MyTurn Subdomain"] +
@@ -111,11 +122,18 @@ function getAuthenticatedSessionCookie() {
   return sessionIdCookie;
 }
 
-function getLocationId(sessionIdCookie) {
+/**
+ * Fetch the MyTurn instance's location identifier, which is required for some
+ * data export requests.
+ *
+ * @param {string} sessionIdCookie - An authenticated MyTurn session cookie
+ * @returns {string} The MyTurn instance's location identifier
+ */
+function getLocationId_(sessionIdCookie) {
   // Location ID is an internal MyTurn numeric identifier (potentially for tool
   // libraries with multiple physical locations?) required for some admin report
   // requests
-  const config = getConfiguration();
+  const config = getConfiguration_();
 
   const res = UrlFetchApp.fetch(
     "https://" +

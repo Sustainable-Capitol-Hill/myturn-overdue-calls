@@ -1,4 +1,9 @@
-var getConfiguration = function () {
+/**
+ * Reads the spreadsheet and returns its configuration values.
+ *
+ * @returns {Object} The configuration key-value pairs
+ */
+var getConfiguration_ = function () {
   const configSheet =
     SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Configuration");
 
