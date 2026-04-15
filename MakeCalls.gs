@@ -24,7 +24,7 @@ function onOpen() {
 }
 
 // prettier-ignore
-var CALL_OUTCOME_CATEGORIES = {
+var CALL_OUTCOME_CATEGORIES_ = {
   TALKED_WILL_RETURN: "🗣️ Talked to patron, and they plan to return the item(s)",
   TALKED_WONT_RETURN: "🗣️ Talked to patron, but they won't or can't return the item(s)",
   TALKED_DROPPED: "🗣️ Talked to patron, but they hung up on you or the call dropped",
@@ -48,12 +48,12 @@ function getParentTaxonName_(taxonName) {
   // Not being able to use `let`s or `Array.find` in this JS engine is annoying
   var taxonParentId;
   var parentTaxon;
-  MY_TURN_ITEM_TAXONOMY.forEach(function (taxon) {
+  MY_TURN_ITEM_TAXONOMY_.forEach(function (taxon) {
     if (taxon.name === taxonName) {
       taxonParentId = taxon.parent;
     }
   });
-  MY_TURN_ITEM_TAXONOMY.forEach(function (taxon) {
+  MY_TURN_ITEM_TAXONOMY_.forEach(function (taxon) {
     if (taxon.id === taxonParentId) {
       parentTaxon = taxon;
     }
@@ -280,7 +280,7 @@ function initiateCallDialog(filters) {
 
   const t = HtmlService.createTemplateFromFile("callForm");
   t.config = getConfiguration_();
-  t.outcomeCategories = CALL_OUTCOME_CATEGORIES;
+  t.outcomeCategories = CALL_OUTCOME_CATEGORIES_;
   t.userToCall = userToCall;
   SpreadsheetApp.getUi().showModalDialog(t.evaluate(), "Overdue call to make");
 }

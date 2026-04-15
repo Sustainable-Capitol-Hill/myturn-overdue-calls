@@ -1,5 +1,5 @@
 // Copied from https://capitolhill.myturn.com/library/orgInventory/itemTypeListJSON
-var MY_TURN_ITEM_TAXONOMY = [
+var MY_TURN_ITEM_TAXONOMY_ = [
   {
     name: "Tools",
     id: 2,
