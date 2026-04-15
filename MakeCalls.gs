@@ -191,7 +191,7 @@ function getHighValueTaxa_() {
  * @param {string=} filters.itemNameToSearch - A substring that must match an item in the user's overdue cart
  * @param {boolean=} filters.onlyHigherValueItems - Whether to only include users with high-value items checked out
  */
-function initiateCallDialog(filters) {
+function initiateCallDialog_(filters) {
   // Fetch some filters from the spreadsheet's configuration
   const config = getConfiguration_();
   const minimumDaysOverdue =
@@ -288,7 +288,7 @@ function initiateCallDialog(filters) {
 /**
  * Initiate a dialog to ask which item name to filter for.
  */
-function initiateFilteredCallDialog() {
+function initiateFilteredCallDialog_() {
   const t = HtmlService.createHtmlOutputFromFile("callFilterForm");
   SpreadsheetApp.getUi().showModalDialog(t, "Filter your overdue call");
 }
@@ -296,6 +296,6 @@ function initiateFilteredCallDialog() {
 /**
  * Initiate a call dialog for a random patron with high-value items checked out.
  */
-function initiateHigherValueCallDialog() {
-  initiateCallDialog({ onlyHigherValueItems: true });
+function initiateHigherValueCallDialog_() {
+  initiateCallDialog_({ onlyHigherValueItems: true });
 }

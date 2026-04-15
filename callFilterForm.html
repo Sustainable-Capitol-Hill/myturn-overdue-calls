@@ -8,7 +8,7 @@
         google.script.run
           // Close the modal once the form is submitted and the next dialog opens
           .withSuccessHandler(google.script.host.close)
-          .initiateCallDialog(formObject);
+          .initiateCallDialog_(formObject);
       }
     </script>
   </head>
